@@ -81,9 +81,7 @@ if menu_selection == "Inicio":
     # Bienvenido a GO ADVISORS
     ## Somos el camino que te ayudará a cumplir todas tus metas financieras
     """)
-elif menu_selection == "Proyecta tu Inversión":
-    st.markdown("# Proyecta tu Inversión")
-    # Tu código para esta sección...
+
 elif menu_selection == "Noticias de Mercado":
     st.markdown("# Noticias de Mercado")
     # Mostrar DataFrame con los tickers por sector
@@ -130,40 +128,3 @@ elif menu_selection == "Noticias de Mercado":
         
         st.markdown("---")
 
-elif menu_selection == "Mercado Financiero":
-    st.markdown("# Mercado Financiero")
-    ticker = st.text_input("Introduce el ticker de una compañía (ej. AAPL, GOOGL, MSFT):", value='AAPL')
-    data_period = st.select_slider("Selecciona el rango de datos:", options=['1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'])
-    load_data = st.button("Cargar Datos")
-
-    if load_data:  # Asegurarse de que el botón ha sido presionado
-        try:
-            data = yf.download(ticker, period=data_period)
-            if not data.empty:
-                fig = go.Figure(data=[go.Candlestick(x=data.index,
-                    open=data['Open'], high=data['High'],
-                    low=data['Low'], close=data['Close'])])
-                fig.update_layout(title=f"Datos históricos de precios para {ticker}", xaxis_title='Fecha', yaxis_title='Precio')
-                st.plotly_chart(fig)
-            else:
-                st.markdown("<span style='color:red;font-weight:bold'>LO LAMENTO BOLIVIANO, INGRESA UN TICKER VÁLIDO</span>", unsafe_allow_html=True)
-        except Exception as e:
-            st.markdown("<span style='color:red;font-weight:bold'>LO LAMENTO BOLIVIANO, INGRESA UN TICKER VÁLIDO</span>", unsafe_allow_html=True)
-elif menu_selection == "Cartera Eficiente":
-    st.markdown("# Cartera Eficiente")
-    # Sección de análisis de cartera
-    st.sidebar.title("Selección de Activos")
-
-    # Mostrar activos por sector
-    for sector in pd.unique(df_tickers['Sector']):
-        st.sidebar.markdown(f"## {sector}")
-        activos_sector = df_tickers[df_tickers['Sector'] == sector]['Display'].tolist()
-        activos_seleccionados_sector = st.sidebar.multiselect("Selecciona activos", activos_sector)
-        if activos_seleccionados_sector:
-            pesos, rendimiento, volatilidad = generar_cartera_optima(activos_seleccionados_sector)
-            st.subheader(f"Cartera Óptima Generada para el Sector {sector}")
-            st.write(f"Rendimiento Esperado: {rendimiento}")
-            st.write(f"Volatilidad: {volatilidad}")
-            st.write("Distribución de activos:")
-            for i, activo in enumerate(activos_seleccionados_sector):
-                st.write(f"{activo}: {pesos[i]*100:.2f}%")
